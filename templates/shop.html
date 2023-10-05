@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}HH-Shop{% endblock title %}
+{% block content %}
+  <!-- PRODUCT DETAILS AREA START -->
+  <div class="ltn__product-area ltn__product-gutter mb-120">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-lg-2 mb-120">
+				<div class="ltn__shop-options">
+					<ul>
+						<li>
+							<div class="ltn__grid-list-tab-menu ">
+								<div class="nav">
+									<a class="active show" data-bs-toggle="tab" href="#liton_product_grid"><i class="fas fa-th-large"></i></a>
+									
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: darkblue; height: 50px;">
+									Sort by
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="sortDropdown">
+									<li><a class="dropdown-item" href="{% url 'filtered_products' %}?sort=price_high_to_low">Price high to low</a></li>
+									<li><a class="dropdown-item" href="{% url 'filtered_products' %}?sort=low_to_high">Price low to high</a></li>
+									<li><a class="dropdown-item" href="{% url 'filtered_products' %}?sort=latest">Latest</a></li>
+								</ul>
+							</div>
+							
+						 </li>
+					</ul>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane fade active show" id="liton_product_grid">
+						<div class="ltn__product-tab-content-inner ltn__product-grid-view">
+							<div class="row">
+								<!-- ltn__product-item -->
+
+								{% for product in products %}
+								<div class="col-xl-4 col-sm-6 col-6">
+									<div class="ltn__product-item ltn__product-item-3 text-center">
+										<div class="product-img">
+											<a href="{% url 'product_details' product.id %}"><img src="{{ product.images.url}}" alt="#"></a>
+											<div class="product-badge">
+												<ul>
+													<li class="sale-badge">New</li>
+												</ul>
+											</div>
+										</div>
+
+										<div class="product-price">
+											{% if product.offer %}
+												&#8377;{{ product.productVariant.first.price }}
+												<del>&#8377;{{ product.price }}</del>
+												<span style="color: black;">({{ product.offer.off_percent }}% off)</span>
+											{% elif product.category.offer %}
+												&#8377;{{ product.get_offer_price_by_category }}
+												<del>&#8377;{{ product.productVariant.first.price }}</del>
+												<span style="color: black;">({{ product.category.offer.off_percent }}% off)</span>
+											{% else %}
+												&#8377;{{ product.productVariant.first.price }}
+											{% endif %}
+										</div>
+										
+
+										<div class="product-info">
+											<a href="{% url 'product_details' product.id %}">
+												<h2 class="product-title">{{ product.product_name }}</h2>
+											</a>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+
+								<!-- ltn__product-item -->
+								
+								
+							
+								<!--  -->
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="liton_product_list">
+						<div class="ltn__product-tab-content-inner ltn__product-list-view">
+							<div class="row">
+								
+								
+								<!--  -->
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="col-lg-4  mb-120"> 
+
+				
+				
+				<!-- Search Widget -->
+				<div class="widget ltn__search-widget">
+					<h4 class="ltn__widget-title ltn__widget-title-border">Search Objects</h4>
+					<form method="GET" action="{% url 'search_result' %}">
+						{% csrf_token %}
+						<input type="text" name="searched" placeholder="Search your keyword...">
+						<button type="submit"><i class="fas fa-search"></i></button>
+					</form>
+				
+					</div>
+				<aside class="sidebar ltn__shop-sidebar ltn__right-sidebar">
+					
+					
+				
+					<!-- Category  Widget -->
+					<div class="widget ltn__menu-widget">
+						<h4 class="ltn__widget-title ltn__widget-title-border">Product categories</h4>
+						<ul>
+							{% for category in categorys %}
+							<li><a href="{% url 'filtered_products' %}?category={{ category.category_name }}">{{ category.category_name }}<span><i class="fas fa-long-arrow-alt-right"></i></span></a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					{% comment %} <div class="widget ltn__menu-widget">
+						<h4 class="ltn__widget-title ltn__widget-title-border">Brand</h4>
+						<ul>
+							{% for i in brand %}
+							<li>
+								<<a href="{% url 'filtered_products' %}?product_name={{ products|get_item:forloop.counter0.product_name }}">{{ products|get_item:forloop.counter0.product_name }}</a> 
+							</li>
+							{% endfor %}
+						</ul>
+					</div> {% endcomment %}
+				</aside> 
+		</div>
+	</div>
+</div>
+<!-- PRODUCT DETAILS AREA END -->
+{% endblock content %}
+{% block java %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const sortSelect = document.getElementById('sort-select');
+		
+		// Add an event listener for when the user selects a sorting option
+		sortSelect.addEventListener('change', function() {
+			const selectedSortOption = sortSelect.value;
+			
+			if (selectedSortOption) {
+				// Redirect to the current URL with the selected sorting option
+				const currentUrl = window.location.href;
+				const url = new URL(currentUrl);
+				url.searchParams.set('sort', selectedSortOption);
+				window.location.href = url.toString();
+			}
+		});
+	});
+	</script>
+
+{% endblock java %}
+

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}HH-variant{% endblock title %}
+{% block content %}
+<section class="banner-bottom-wthreelayouts py-lg-5 py-3">
+	<div class="container">
+
+   
+	   <div>
+       
+       </div>
+		<div class="inner-sec-shop px-lg-4 px-3">
+            <div style="display: flex;justify-content: space-between; align-items: center;" class="">
+			 <div><h3 class="tittle-w3layouts my-lg-4 mt-3">variant </h3></div>
+			
+            </div>
+			<div class="checkout-right">
+				
+					<span></span>
+				</h4>
+				<table class="timetable_sub">   
+					<thead>
+						<tr>
+							<th>SL No.</th>
+							<th>Product</th>
+							<th>Quantity</th>
+							<th>Product Name</th>
+                            
+							<th>Price</th>
+							<th>color</th>
+							<th>Edit</th>
+							
+						</tr>
+					</thead>
+					<tbody>
+					{% for var in variant %}
+						<tr class="rem1">
+							<td class="invert">1</td>
+							<td class="invert-image">
+								<a href="single.html">
+									<img src="{{ var.product.image.url }}" alt=" " class="img-responsive">
+								</a>
+							</td>
+							<td class="invert">
+								<div class="quantity">
+									<div class="quantity-select">
+									
+										<div class="entry value">
+											<span>{{var.quantity}}</span>
+										</div>
+										
+									</div>
+								</div>
+							</td>
+							<td class="invert">{{ var.product.product_name}} 
+								
+							</td>
+
+							<td class="invert">&#8377;{{var.price}}</td>
+                            <td class="invert">{{var.color}}</td>
+							<td><a href="{% url 'editvariant' var.id%}">Edit</a></td>
+							
+						</tr>
+						
+                    {% endfor %}
+
+					</tbody>
+				</table>
+			</div>
+			
+
+		</div>
+
+	</div>
+</section>
+
+
+{% block addscript %}
+<script src="/static/js/jquery-2.2.3.min.js"></script>
+<!-- newsletter modal -->
+<!--search jQuery-->
+<script src="/static/js/modernizr-2.6.2.min.js"></script>
+<script src="/static/js/classie-search.js"></script>
+<script src="/static/js/demo1-search.js"></script>
+<!--//search jQuery-->
+<!-- cart-js -->
+<script src="/static/js/minicart.js"></script>
+</script>
+{% endblock addscript%}
+
+
+
+
+

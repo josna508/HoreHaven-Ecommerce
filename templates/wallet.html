@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}HoreHaven-orders{% endblock title %}
+{% block content %}
+
+<section class="wallet-info">
+    <h2>Wallet Information {{wallet.user}}</h2>
+    <div class="balance">
+        <p>Your Wallet Balance: &#8377;{{wallet.amount}}</p>
+    </div>
+    
+</section>
+
+{% endblock content %}

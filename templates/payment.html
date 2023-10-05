@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}HoreHaven-payment{% endblock title %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <!-- Payment Method Section -->
+        <div class="col-lg-6" style="margin-top: 20px;">
+            <div class="ltn__checkout-payment-method mt-50">
+                <h4 class="title-2">Payment Method</h4>
+                <div id="checkout_accordion_1">
+                    <!-- Cash on Delivery (COD) -->
+                    <div class="card">
+                        <h5 class="ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-cod" aria-expanded="true"> 
+                            Cash on Delivery 
+                        </h5>
+                        <div id="faq-item-cod" class="collapse show" data-bs-parent="#checkout_accordion_1">
+                            <div class="card-body">
+                                <p>Pay with cash upon delivery.</p>
+                                <div>
+                                    <a href="{% url 'payments'  %}">
+                                        <button  class="btn btn-dark font-weight-bold my-3 mx-3">Confirm Order</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                          
+
+                    <!-- Razorpay -->
+                    <div class="card">
+                        <h5 class="collapsed ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-razorpay" aria-expanded="false" >
+                            Razorpay 
+                        </h5>
+                        <div id="faq-item-razorpay" class="collapse" data-bs-parent="#checkout_accordion_1">
+                            <div class="card-body">
+                                <p>Pay via Razorpay; you can securely pay with your card.</p>
+                            </div>
+                            <div>
+                                <a>
+                                    <button id="rzp-button1" class="btn btn-dark font-weight-bold my-3 mx-3">Confirm Order</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ltn__payment-note mt-30 mb-30">
+                    <p>Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Totals Section -->
+        <div class="col-lg-6">
+            <div class="shoping-cart-total mt-50">
+                <h4 class="title-2">Cart Totals</h4>
+                <table class="table">
+                    <tbody>
+                        {% for cart_item in cart_items %}
+                        <tr>
+                            <td>{{ cart_item.product.product_name }}</td>
+                            <td>
+                                {% if cart_item.product.offer %}
+                                <span style="color: black;"><del>{{ cart_item.sub_total }}</del> &#8377; {{ cart_item.sub_total_with_offer }}</span>
+                                {% elif cart_item.product.category.offer %}
+                                <span style="color: black;"><del>{{ cart_item.sub_total }}</del> &#8377; {{ cart_item.sub_total_with_offer_category }}</span>
+                                {% else %}
+                                <span style="color: black;">&#8377; {{ cart_item.sub_total }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if discount_amount %}
+                        <tr>
+                            <td>Coupon discount</td>
+                            <td><span style="color: red;">- &#8377;{{ discount_amount }}</span></td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td>Total Service Charges</td>
+                            <td>Free Delivery <del>99</del></td>
+                        </tr>
+                        <tr>
+                            <td>Shipping and Handing</td>
+                            <td>&#8377;00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Order Total</strong></td>
+                            <td><strong>&#8377;{{ total }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Add margin to create space -->
+    <div style="margin-bottom: 50px;"></div>
+</div>
+
+
+<!-- Razorpay Styles and Scripts -->
+<style>
+    #rzp-button1 {
+        background-color: orange;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #rzp-button1:hover {
+        background-color: darkorange;
+    }
+</style>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "rzp_test_xDqPQabo3GPY1b", // Enter the Key ID generated from the Dashboard
+        "amount": "{{ payment.amount }}"/100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "HoreHaven",
+        {% comment %} //"redirect": true,
+        //"callback_url": "", {% endcomment %}
+        "description": "Thank you for buying from us",
+        "image": "https://example.com/your_logo",
+        "order_id": "{{ payments.id }}", // This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response) {
+            window.location.href = 'http://127.0.0.1:8000/order/success/?${=}razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_order_id=${razorpay_order_id}'
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    
+    rzp1.on('payment.failed', function (response) {
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+    });
+
+    document.getElementById('rzp-button1').onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+
+           
+        // Set the button's style to blue
+        document.getElementById('rzp-button1').style.backgroundColor = 'blue';
+        document.getElementById('rzp-button1').style.color = 'white';
+    }
+</script>
+
+{% endblock content %}

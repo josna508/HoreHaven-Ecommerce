@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+{% block title %}HoreHaven- Cart{% endblock title %}
+{% block css %}
+<style>
+    .cart-quantity-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .cart-quantity-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: #f2f2f2;
+        border: 1px solid #ccc;
+        color: #333;
+        font-size: 18px;
+        text-decoration: none;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .cart-quantity-button:hover {
+        background-color: #ccc;
+        color: #000;
+    }
+
+    .cart-quantity-input {
+        width: 60px;
+        height: 30px;
+        text-align: center;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin: 0 10px;
+    }
+    <style>
+        /* Your CSS styles go here */
+        .cart-summary {
+            /* Remove the border */
+            padding: 20px;
+        }
+    
+        .coupon-input {
+            display: flex;
+            align-items: center;
+        }
+    
+        .form-control {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+        }
+    
+        .apply-button {
+            background-color: #0a58ca; /* Change the button color here */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    
+        .apply-button:hover {
+            background-color: #131212; /* Change the hover color here */
+        }
+    
+        .applied-coupon {
+            color: green;
+            margin-top: 10px;
+        }
+    
+        .coupon-list {
+            list-style: none;
+            padding: 0;
+        }
+    
+        .coupon-list li {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+    
+        .coupon-code {
+            font-weight: bold;
+            font-size: 18px;
+        }
+    
+        .coupon-description {
+            color: #555;
+            margin: 5px 0 0;
+            /* Add left margin to move it to the left */
+            margin-right: 550px; /* You can adjust this value as needed */
+            vertical-align: top;
+            display: inline-block; /* Add this property to make vertical-align work */
+}
+
+        
+        
+        .coupon-info {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    
+        .coupon-list {
+            list-style: none;
+            padding: 0;
+        }
+    
+        .coupon-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Add spacing between coupons */
+          
+        }
+    
+        .coupon-code {
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px; /* Add spacing between coupon code and description */
+            min-width: 50px; /* Ensure a minimum width for alignment */
+        }
+    
+        .coupon-description {
+            color: #555; /* Change text color for coupon description */
+            flex: 1; /* Allow the description to take up remaining space */
+        }
+    
+        /* Coupon Input and Apply Button Styles */
+        .coupon-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px; /* Add spacing between input and applied coupon */
+        }
+    
+        .form-control {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+        }
+    
+        .apply-button {
+            background-color: #0a58ca;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+    
+        .apply-button:hover {
+            background-color: #131212;
+        }
+    
+        /* Applied Coupon Styles */
+        .applied-coupon {
+            color: green;
+            margin-top: 10px;
+            font-size: 5px; /* Reduce font size for smaller column */
+        }
+    
+    
+</style>
+{% endblock css %}
+{% block content %}
+<!-- BREADCRUMB AREA START -->
+<div class="ltn__breadcrumb-area text-left bg-overlay-white-30 bg-image "  data-bs-bg="img/bg/14.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ltn__breadcrumb-inner">
+                    <h1 class="page-title">Cart</h1>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+                            <li><a href="{% url 'index' %}"><span class="ltn__secondary-color"><i class="fas fa-home"></i></span> Home</a></li>
+                            <li>Cart</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BREADCRUMB AREA END -->
+
+<!-- SHOPING CART AREA START -->
+<div class="liton__shoping-cart-area mb-120">
+    <div class="container">
+        {% if messages%} {% for message in messages%}
+                            <div
+                            class="alert alert-warning alert-dismissible fade show"
+                            role="alert"
+                            >
+                            <strong></strong>{{message}}
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                            </div>
+                            {%endfor%} {%endif%}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping-cart-inner">
+                    <div class="shoping-cart-table table-responsive">
+                        <table class="table">
+                            <!-- <thead>
+                                <th class="cart-product-remove">Remove</th>
+                                <th class="cart-product-image">Image</th>
+                                <th class="cart-product-info">Product</th>
+                                <th class="cart-product-price">Price</th>
+                                <th class="cart-product-quantity">Quantity</th>
+                                <th class="cart-product-subtotal">Subtotal</th>
+                            </thead> -->
+                            <tbody>
+                                {% for cart_item in cart_items %}
+                                <tr>
+                                    <td class="cart-product-remove">
+                                        <a href="{% url 'deletecart' cart_item.id %}" class="delete-cart-item">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                    <td class="cart-product-image">
+                                        <a href="{% url 'product_details' cart_item.product.id %}">
+                                            <img src="{{ cart_item.product.images.url }}" alt="Product">
+                                        </a>
+                                    </td>
+                                    <td class="cart-product-info">
+                                        <h4><a href="product-details.html">{{ cart_item.product.product_name }}</a></h4>
+                                         <p>Variant: {{ cart_item.variant.color }}</p> 
+                                    </td>
+                                    <td class="cart-product-price">
+                                        {% if cart_item.product.offer %}
+                                            <span>&#8377;{{ cart_item.sub_total_with_offer }}</span>
+                                        {% elif cart_item.product.category.offer %}
+                                            <span>&#8377;{{ cart_item.sub_total_with_offer_category }}</span>
+                                        {% else %}
+                                            <span>&#8377;{{ cart_item.variant.price }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="cart-product-quantity">
+                                        <div class="cart-quantity-control">
+                                            {% comment %} <a href="{% url 'removecart' cart_item.product.id %}" class="cart-quantity-button">
+                                                <i class="fa fa-minus"></i>
+                                            </a>
+                                            <input type="number" class="cart-quantity-input" id="qty" step="{{ cart_item.quantity }}" min="{{ count }}" max="300" name="quantity" value="{{ cart_item.quantity }}">
+                                            <a href="{% url 'addcart' cart_item.product.id %}" class="cart-quantity-button">
+                                                <i class="fa fa-plus"></i>
+                                            </a> {% endcomment %}
+                                              
+                                            <a href="#" class="quantity-button decrement-btn" data-cart-item-id="{{ cart_item.product.id }}">
+                                                <span>-</span> <!-- Minus Icon -->
+                                              </a>
+                                              
+                                              <label id="quantity-label-{{ cart_item.variant.id }}">{{ cart_item.quantity }}</label>
+                                              
+                                              <a href="#" class="quantity-button increment-btn" data-cart-item-id="{{ cart_item.variant.id }}">
+                                                <span>+</span> <!-- Plus Icon -->
+                                              </a>
+                                        </div>
+                                    </td>
+                                    <td class="cart-product-subtotal">&#8377;{{ cart_item.sub_total }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="cart-coupon-row">
+                                    <td colspan="3">
+                                        <div class="cart-summary" style="margin-top: 50px;">
+                                            <h5 class="agileits-sear-head">Apply Coupon</h5>
+                                            <form action="{% url 'cart' %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="coupon-input">
+                                                    <input class="form-control" type="search" name="search" placeholder="Enter coupon code..." required="">
+                                                    <button class="apply-button" type="submit">
+                                                        Apply
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <h5 class="agileits-sear-head">Available Coupons</h5>
+                                            {% if cart.coupon %}
+                                            <h6 class="agileits-sear-head" style="color: green;">Coupon "{{ cart.coupon.coupon_code }}-" applied.</h6>
+                                            {% endif %}
+                                            <ul class="coupon-list">
+                                                {% for coupon in coupons %}
+                                                <li class="coupon-item">
+                                                    <div class="coupon-code">{{coupon.coupon_code}} = </div>
+                                                    <p class="coupon-description">Save {{coupon.off_percent}}% on your cart total</p>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'shop' %}" class="btn btn-primary btn-block mt-3">Continue Shopping</a>
+                                    </td>
+                                </tr>                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="shoping-cart-total mt-50">
+                        <h4>Cart Totals</h4>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Cart Subtotal</td>
+                                    <td id = "cart_sub_total">&#8377;{{ sub_total }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Shipping and Handling</td>
+                                    <td>&#8377;00</td>
+                                </tr>
+                                {% if discount_amount %}
+                                 
+                                <tr>
+                                    <td>Coupon Discount:</td>
+                                    <td>&#8377;{{discount_amount}}</td>
+                                </tr>
+                                {% endif %}
+                                {% if offer_price %}
+                                 
+                                <tr>
+                                    <td>Offer:</td>
+                                    <td>&#8377;{{offer_price}}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td><strong>Order Total</strong></td>
+                                    <td id="cart_total"><strong>&#8377;{{ total}}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="btn-wrapper text-right">
+                            <a href="{% url 'checkout' %}" class="theme-btn-1 btn btn-effect-1">Proceed to checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SHOPING CART AREA END -->
+{% endblock content %}
+
+{% block java %}
+<script>
+    function handleMinusClick(event) {
+        var effect = document.getElementById('qty');
+        var qty = effect.value;
+        if (!isNaN(qty) && qty > 1) {
+            effect.value--;
+            var productID = event.target.getAttribute("href").split("/").pop();
+            removeCart(productID);
+        }
+        event.preventDefault();
+    }
+
+    function handlePlusClick(event) {
+        var effect = document.getElementById('qty');
+        var qty = effect.value;
+        if (!isNaN(qty)) {
+            effect.value++;
+            var productID = event.target.getAttribute("href").split("/").pop();
+            addCart(productID);
+        }
+        event.preventDefault();
+    }
+
+    // // Function to add the product to the cart
+    // function addCart(productID) {
+    //     // Implement your logic for adding the product to the cart using the productID
+    //     // For example, you can make an AJAX request to the server to add the product to the cart.
+    //     // Replace the following line with your implementation:
+    //     console.log("Adding product with ID " + productID + " to the cart.");
+    // }
+
+    // // Function to remove the product from the cart
+    // function removeCart(productID) {
+    //     // Implement your logic for removing the product from the cart using the productID
+    //     // For example, you can make an AJAX request to the server to remove the product from the cart.
+    //     // Replace the following line with your implementation:
+    //     console.log("Removing product with ID " + productID + " from the cart.");
+    // }
+
+
+
+  //ajax for cart increment and decrement.
+  $(document).ready(function() {
+      // Increment button click
+      $('.increment-btn').on('click', function(e) {
+          e.preventDefault();
+          var variant_id = $(this).data('cart-item-id');
+          $.ajax({
+              type: "GET",
+              url: "{% url 'addcart' 0 %}".replace('0', variant_id),
+              success: function(response) {
+                console.log(response.quantity)
+                  // Update the quantity label
+                  $('#quantity-label-' + variant_id).text(response.quantity);
+                  // Update the cart total
+                  $('#cart-total').text(response.cart_total);
+                  // Update the cartitem price
+                  $('#cart-item-price-'+ variant_id).text('₹' + response.item_price);
+                  document.getElementById('cart_sub_total').innerText = response.subtotal
+                  document.getElementById('cart_total').innerText = response.subtotal
+                  {% comment %} Swal.fire({
+                  title: "Success",
+                  text: "Quantity added!",
+                  icon: "success",
+              });  {% endcomment %}
+              },
+              error: function(response) {
+                // Use SweetAlert2 to display the error message
+                Swal.fire({
+                  title: "Error",
+                  text: response.responseJSON.error,
+                  icon: "error",
+              });
+              }
+          });
+      });
+
+      // Decrement button click
+      $('.decrement-btn').on('click', function(e) {
+          e.preventDefault();
+          var variant_id = $(this).data('cart-item-id');
+          $.ajax({
+              type: "GET",
+              url: "{% url 'removecart' 0 %}".replace('0', variant_id),
+              success: function(response) {
+                  // Update the quantity label
+                  console.log(response.quantity,"< ----------------")
+                  $('#quantity-label-' + variant_id).text(response.quantity);
+                  // Update the cart total
+                  $('#cart-total').text(response.cart_total);
+                  // Update the cartitem price
+                  $('#cart-item-price-'+ variant_id).text('₹' + response.item_price);
+                  document.getElementById('cart_sub_total').innerText = response.subtotal
+                  document.getElementById('cart_total').innerText = response.subtotal
+
+                  {% comment %} Swal.fire({
+                  title: "Success",
+                  text: "Quantity reduced!",
+                  icon: "success",
+              });  {% endcomment %}
+              },
+              error: function(response) {
+                console.log('err', response);
+                Swal.fire({
+                  title: "Error",
+                  text: response.responseJSON.error,
+                  icon: "error",
+              });
+              }
+          });
+      });
+  });
+
+
+
+
+</script>
+{% endblock java %}

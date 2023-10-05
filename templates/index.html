@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% block title %}
+HoroHaven-home
+{% endblock title %}
+{% block content %}
+
+
+<!-- SLIDER AREA START (slider-3) -->
+<div class="ltn__slider-area ltn__slider-3---  section-bg-1--- mt-30">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <!-- CATEGORY-MENU-LIST START -->
+                <div class="ltn__category-menu-wrap">
+                    <div class="ltn__category-menu-title">
+                        <h2 class="section-bg-1 ltn__secondary-bg text-color-white">categories</h2>
+                    </div>
+                    <div class="ltn__category-menu-toggle ltn__one-line-active">
+                        <ul>
+                            <!-- Submenu Column - unlimited -->
+                            <li class="ltn__category-menu-item ltn__category-menu-drop">
+                                <a href="{% url 'filtered_products' %}?category=Women"><i class="icon-options"></i> Women </a>
+                            </li>
+                            
+                            
+                            
+                            <li class="ltn__category-menu-item ltn__category-menu-drop">
+                                <a href="{% url 'filtered_products' %}?category=Men"><i class="icon-shopping-bags"></i> Men </a>
+                            </li>
+                            
+                            
+                                    
+                            
+                            <!-- Single menu end -->
+                        </ul>
+                    </div>
+                </div>
+                <!-- END CATEGORY-MENU-LIST -->
+            </div>
+            <div class="col-lg-9">
+                <div class="ltn__slide-active-2 slick-slide-arrow-1 slick-slide-dots-1">
+                    <!-- ltn__slide-item -->
+                    <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bs-bg="/static/img/slider/61.jpg">
+                        <div class="ltn__slide-item-inner">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-7 col-md-7 col-sm-7 align-self-center">
+                                        <div class="slide-item-info">
+                                            <div class="slide-item-info-inner ltn__slide-animation">
+                                                <h5 class="slide-sub-title ltn__secondary-color animated text-uppercase">Up To 50% Off Today Only!</h5>
+                                                <h1 class="slide-title  animated">Gold Standard <br>Pre-Workout</h1>
+                                                <div class="slide-brief animated d-none">
+                                                    <p>Predictive analytics is drastically changing the real estate industry. In the past, providing data for quick</p>
+                                                </div>
+                                                <div class="btn-wrapper  animated">
+                                                    <a href="{% url 'shop' %}" class="theme-btn-1 btn btn-effect-1 text-uppercase">Shop now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 align-self-center">
+                                        <div class="slide-item-img">
+                                            <!-- <a href="shop.html"><img src="/static/img/product/1.png" alt="Image"></a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% comment %} <!-- ltn__slide-item -->
+                    <div class="ltn__slide-item ltn__slide-item-10 section-bg-1 bg-image" data-bs-bg="/static/img/slider/62.jpg">
+                        <div class="ltn__slide-item-inner">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-7 col-md-7 col-sm-7 align-self-center">
+                                        <div class="slide-item-info">
+                                            <div class="slide-item-info-inner ltn__slide-animation">
+                                                <h4 class="slide-sub-title ltn__secondary-color animated text-uppercase">Welcome to our shop</h4>
+                                                <h1 class="slide-title  animated">Gold Standard <br>Pre-Workout</h1>
+                                                <div class="slide-brief animated d-none">
+                                                    <p>Predictive analytics is drastically changing the real estate industry. In the past, providing data for quick</p>
+                                                </div>
+                                                <div class="btn-wrapper  animated">
+                                                    <a href="shop.html" class="theme-btn-1 btn btn-effect-1 text-uppercase">Shop now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5 align-self-center">
+                                        <div class="slide-item-img"> {% endcomment %}
+                                            <!-- <a href="shop.html"><img src="/static/img/slider/62.jpg" alt="Image"></a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SLIDER AREA END -->
+
+<!-- FEATURE AREA START ( Feature - 3) -->
+{% comment %} <div class="ltn__feature-area mt-35 mt--65---">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ltn__feature-item-box-wrap ltn__feature-item-box-wrap-2 ltn__border section-bg-1">
+                    <div class="ltn__feature-item ltn__feature-item-8">
+                        <div class="ltn__feature-icon">
+                            <img src="/static/img/icons/svg/8-trolley.svg" alt="#">
+                        </div>
+                        <div class="ltn__feature-info">
+                            <h4>Free shipping</h4>
+                            <p>On all orders over $49.00</p>
+                        </div>
+                    </div>
+                    <div class="ltn__feature-item ltn__feature-item-8">
+                        <div class="ltn__feature-icon">
+                            <img src="/static/img/icons/svg/9-money.svg" alt="#">
+                        </div>
+                        <div class="ltn__feature-info">
+                            <h4>15 days returns</h4>
+                            <p>Moneyback guarantee</p>
+                        </div>
+                    </div>
+                    <div class="ltn__feature-item ltn__feature-item-8">
+                        <div class="ltn__feature-icon">
+                            <img src="/static/img/icons/svg/10-credit-card.svg" alt="#">
+                        </div>
+                        <div class="ltn__feature-info">
+                            <h4>Secure checkout</h4>
+                            <p>Protected by Paypal</p>
+                        </div>
+                    </div>
+                    <div class="ltn__feature-item ltn__feature-item-8">
+                        <div class="ltn__feature-icon">
+                            <img src="/static/img/icons/svg/11-gift-card.svg" alt="#">
+                        </div>
+                        <div class="ltn__feature-info">
+                            <h4>Offer & gift here</h4>
+                            <p>On all orders over</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+<!-- FEATURE AREA END -->
+
+<!-- PRODUCT TAB AREA START (product-item-3) -->
+<div class="ltn__product-tab-area ltn__product-gutter pt-115 pb-70">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title-area ltn__section-title-2--- text-center">
+                    <!-- <h6 class="section-subtitle ltn__secondary-color">// Cars</h6> -->
+                    <h1 class="section-title">Our Products</h1>
+                    
+                </div>
+                <div class="ltn__tab-menu ltn__tab-menu-2 ltn__tab-menu-top-right-- text-uppercase text-center">
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="liton_tab_3_1">
+                        <div class="ltn__product-tab-content-inner">
+                            <div class="row ltn__tab-product-slider-one-active slick-arrow-1">
+
+                                <!-- ltn__product-item -->
+                                {% for product in products %}
+                                <div class="col-lg-12">
+                                    <div class="ltn__product-item ltn__product-item-3 text-center">
+                                        <div class="product-img">
+                                            <a href="{% url 'product_details' product.id %}"><img src="{{ product.images.url }}" alt="#"></a>
+                                            
+                                        </div>
+                                        <div class="product-info">
+                                            <h2 class="product-title"><a href="{% url 'product_details' product.id %}">{{ product.product_name }}</a></h2>
+                                            <div class="product-price">
+                                                <span>&#8377; {{ product.productVariant.first.price }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- PRODUCT TAB AREA END --> 
+
+                 <!-- ABOUT US AREA START -->
+                <div class="ltn__about-us-area bg-image pt-115 pb-110 d-none" data-bs-bg="/static/img/bg/26.jpg">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 align-self-center">
+                                <div class="about-us-img-wrap about-img-left">
+                                    <!-- <img src="/static/img/others/7.png" alt="About Us Image"> -->
+                                </div>
+                            </div>
+                            <div class="col-lg-6 align-self-center">
+                                <div class="about-us-info-wrap">
+                                    <div class="section-title-area ltn__section-title-2--- mb-20">
+                                        <h6 class="section-subtitle section-subtitle-2--- ltn__secondary-color">N95 Facial Covering Mask</h6>
+                                        <h1 class="section-title">Grade A Safety Masks
+                                            For Sale. Haurry Up!</h1>
+                                        <p>Over 39,000 people work for us in more than 70 countries all over the
+                                            This breadth of global coverage, combined with specialist services</p>
+                                    </div>
+                                    <ul class="ltn__list-item-half clearfix">
+                                        <li>
+                                            <i class="flaticon-home-2"></i>
+                                            Activated Carbon
+                                        </li>
+                                        <li>
+                                            <i class="flaticon-mountain"></i>
+                                            Breathing Valve
+                                        </li>
+                                        <li>
+                                            <i class="flaticon-heart"></i>
+                                            6 Layer Filteration
+                                        </li>
+                                        <li>
+                                            <i class="flaticon-secure"></i>
+                                            Rewashes & Reusable
+                                        </li>
+                                    </ul>
+                                    <div class="btn-wrapper animated">
+                                        <a href="service.html" class="ltn__secondary-color text-uppercase text-decoration-underline">View Products</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- ABOUT US AREA END -->
+
+                <!-- COUNTDOWN AREA START -->
+                <div class="ltn__call-to-action-area section-bg-1 bg-image pt-120 pb-120" data-bs-bg="/static/img/bg/27.jpg">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-7 col-md-6 col-sm-4" >
+                                <!-- <img src="/static/img/banner/15.png" alt="#"> -->
+                            </div>
+                            <div class="col-lg-5 col-md-6 col-sm-8" >
+                                <div class="call-to-action-inner text-color-white--- text-center---">
+                                    <div class="section-title-area ltn__section-title-2--- text-center---">
+                                    
+                                        <h1 class="section-title" style="margin-top: 100px;">Life is short<br> buy the watch</h1>
+
+                                        
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- COUNTDOWN AREA END --> 
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+{% endblock content %}

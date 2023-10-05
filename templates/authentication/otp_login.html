@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}HH-Otp Login{% endblock title %}
+{% block css %}
+
+{% endblock css %}
+{% block content %}
+
+<div class="ltn__login-area pb-65">
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="account-login-inner">
+                    <form action="{% url 'otp_login' %}" class="ltn__form-box contact-form-box" method="POST">
+                        {% csrf_token %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong></strong>{{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <input name="email" id="email" {% if otp %} value="{{ usr.email }}" type="hidden" {% else %} type="email" {% endif %} required>
+                        </div>
+                        {% if otp %}
+                            <div class="field">
+                                <label for="otp">OTP</label>
+                                <input type="password" id="otp" name="otp" required>
+                            </div>
+                            <div class="field">
+                                <input type="submit" value="Login">
+                            </div>
+                        {% else %}
+                            <div class="field">
+                                <input type="submit" value="Get OTP">
+                            </div>
+                       
+                        <div class="signup-link">
+                            <p>Not a member? <a href="{% url 'signup' %}">Login</a></p>
+                        </div>
+                        {% endif %}
+                        </form>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div> 
+
+{% endblock content %}
+   

@@ -1,0 +1,108 @@
+{% extends 'adminpanel/base.html' %}
+{% block title %}Edit Variant{% endblock title %}
+{% block content %}
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Edit Variant</h2>
+                <div>
+                    <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">
+                        Save to draft
+                    </button>
+                    <button class="btn btn-md rounded font-sm hover-up">
+                        Publish
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Edit Variant</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" onsubmit="return validateForm();" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong></strong>{{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="mb-4">
+                            <label for="product" class="form-label">Product:</label>
+                            <select name="product" id="product">
+                                {% for product in products %}
+                                    <option value="{{ product.id }}" {% if variant.product.id == product.id %}selected{% endif %}>{{ product.product_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Price</label>
+                            <input type="number" placeholder="" class="form-control" name="price" value="{{ variant.price }}" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Quantity</label>
+                            <input placeholder="Type here" class="form-control" name="quantity" type="number" value="{{ variant.quantity }}" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Product Images</label>
+                            <input class="form-control" type="file" multiple name="images" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Color</label>
+                            <input placeholder="Type here" class="form-control" name="color" type="text" value="{{ variant.color }}" />
+                        </div>
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Update</button>
+                    </form>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+            <script>
+                document.write(new Date().getFullYear());
+            </script>
+            &copy; Nest - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+            <div class="text-sm-end">All rights reserved</div>
+        </div>
+    </div>
+</footer>
+<script>
+    function validateForm() {
+        var price = document.getElementById("price").value.trim();
+        var quantity = document.getElementById("quantity").value.trim();
+
+        if (isNaN(price) || price <= 0) {
+            alert("Please enter a valid price.");
+            return false;
+        }
+
+        if (isNaN(quantity) || quantity <= 0) {
+            alert("Please enter a valid quantity.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+</main>
+<script src="/static/admin_assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/static/admin_assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/static/admin_assets/js/vendors/select2.min.js"></script>
+<script src="/static/admin_assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/static/admin_assets/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/static/admin_assets/js/main.js?v=1.1" type="text/javascript"></script>
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}HH-SignUp{% endblock title %}
+{% block css %}
+<style>
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="password"]:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+<!-- LOGIN AREA START (Register) -->
+<div class="ltn__login-area pb-110">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title-area text-center">
+                    <h1 class="section-title">Register <br>Your Account</h1>
+                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. <br>
+                         Sit aliquid,  Non distinctio vel iste.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="account-login-inner">
+                    <form action="{% url 'signup' %}" class="ltn__form-box contact-form-box" onsubmit="return btnClick()" method="post">
+                        {% csrf_token %}
+                     
+                            {% if messages %}
+                                {% for message in messages %}
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong></strong>{{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                    
+                        <input type="text" name="username" placeholder="username" name="username" id = "username"required>
+                        <input type="text" name="firstname" placeholder="First Name" name="fname" id = "fname"required>
+                        <input type="text" name="lastname" placeholder="Last Name" name="lname" id = "lname"required>
+                        <input type="text" name="email" placeholder="Email*" name ="email" id ="email"required>
+                        <input type="tel" name="phone" placeholder="Phone Number*" id="phone" required>
+                        <input type="password" name="password" placeholder="Password*" name ="pass1" id = "pass1"required>
+                        <input type="password" name="confirmpassword" placeholder="Confirm Password*" name = "pass2"required>
+                        
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="">
+                            I consent to Herboil processing my personal data in order to send personalized marketing material in accordance with the consent form and the privacy policy.
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="">
+                            By clicking "create account", I consent to the privacy policy.
+                        </label>
+                        <div class="btn-wrapper">
+                            <button class="theme-btn-1 btn reverse-color btn-block" type="submit">CREATE ACCOUNT</button>
+                        </div>
+                    </form>
+                    <div class="by-agree text-center">
+                        <p>By creating an account, you agree to our:</p>
+                        <p><a href="#">TERMS OF CONDITIONS PRIVACY POLICY</a></p>
+                        <div class="go-to-btn mt-50">
+                            <a href="{% url 'handlelogin' %}">ALREADY HAVE AN ACCOUNT ?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- LOGIN AREA END -->
+{% endblock content %}

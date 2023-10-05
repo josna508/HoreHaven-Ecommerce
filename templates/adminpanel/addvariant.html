@@ -1,0 +1,156 @@
+{% extends 'adminpanel/base.html' %}
+{% block title %}HoreHaven-Variant{% endblock title %}
+{% block content %}
+<section class="content-main">
+    <div class="row">
+      <div class="col-9">
+        <div class="content-header">
+          <h2 class="content-title">Add New Variant</h2>
+          <div>
+            {% comment %} <button
+              class="btn btn-light rounded font-sm mr-5 text-body hover-up"
+            >
+              Save to draft
+            </button>
+            <button class="btn btn-md rounded font-sm hover-up">
+              Publish
+            </button> {% endcomment %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4>Basic</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" onsubmit="return validateForm();" enctype="multipart/form-data">
+              {% csrf_token %}{% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong></strong>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+              <div class="mb-4">
+                <label for="product_name" class="form-label"
+                  >Product:</label
+                >
+                <select name="product">
+                  {% for product in products %}
+                  <option value="{{product.id}}">{{product.product_name}}</option>
+                  {% endfor %}
+                </select>
+                
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Price</label>
+                <input
+                  type="number"
+                  placeholder=""
+                  class="form-control"
+                  name="price"
+                  id="price"
+                />
+              </div>
+              <div class="mb-4">
+                <label class="form-label">quantity</label>
+                <input
+                  placeholder="Type here"
+                  class="form-control"
+                  name="quantity"
+                  type="number"
+                ></input>
+              </div>
+              <div class="mb-4">  
+                <label class="form-label">Product Images</label>
+                <input class="form-control" type="file" multiple name="images" />
+              </div>
+              <div class="mb-4">
+                <label class="form-label">color</label>
+                <input
+                  placeholder="Type here"
+                  class="form-control"
+                  name="color"
+                  type="text"
+                ></input>
+              </div>
+                               
+              <!-- <div class="row"> -->
+                <button class="btn btn-primary btn-md rounded font-sm hover-up" type="submit" style="background-color: #00008B;">
+                  Add
+              </button>
+              
+            </form>
+            <br>
+            <br>
+          </div>
+        </div>
+      </div>
+        <!-- card end// -->
+
+  <!-- content-main end// -->
+  <footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+      <div class="col-sm-6">
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        &copy; Nest - HTML Ecommerce Template .
+      </div>
+      <div class="col-sm-6">
+        <div class="text-sm-end">All rights reserved</div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    function validateForm() {
+        var product_name = document.getElementById("product_name").value.trim();
+        var stock = document.getElementById("stock").value.trim();
+        var price = document.getElementById("price").value.trim();
+        var slug = document.getElementById("slug").value.trim();
+
+        // Perform custom validation checks
+        if (product_name === "" || product_name.length > 100) {
+            alert("Please enter a product name with a maximum length of 100 characters.");
+            return false;
+        }
+        if (slug === "" || product_name.length > 100) {
+            alert("Please enter slug field with a maximum length of 100 characters.");
+            return false;
+        }
+
+        if (isNaN(price) || price <= 0) {
+            alert("Please enter a valid price.");
+            return false;
+        }
+
+        if (isNaN(stock) || stock <= 0) {
+            alert("Please enter a valid stock quantity.");
+            return false;
+        }
+
+        // Return true to submit the form
+        return true;
+    }
+</script>
+</main>
+<script src="/static/admin_assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/static/admin_assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/static/admin_assets/js/vendors/select2.min.js"></script>
+<script src="/static/admin_assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/static/admin_assets/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script
+src="/static/admin_assets/js/main.js?v=1.1"
+type="text/javascript"
+></script>
+</body>
+</html>
+
+
+
+
+
+{% endblock content %}
