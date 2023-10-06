@@ -19,38 +19,36 @@ from django.contrib.auth import login, authenticate
 from .utility import send_otp  # Import your send_otp function
 
 def signup(request):
-    if request.method=="POST":
+    # Check if the HTTP request method is POST
+    if request.method == "POST":
+        # Check if the 'otp' parameter is in the POST request
         get_otp = request.POST.get('otp')
         if not get_otp:
-            username = request.POST.get('username')
-            fname = request.POST.get('fname')
-            lname = request.POST.get('lname')
-            email = request.POST.get('email')
-            pass1 = request.POST.get('pass1')
-            pass2 = request.POST.get('pass2')
-            phone_no = request.POST.get('phno')
+            # If 'otp' is not present in the POST data, proceed with user registration
 
-            # Check if username field is present and not empty
+            # Get data from the POST request
             username = request.POST.get('username')
-            if username is None or username == '':
+            fname = request.POST.get('firstname')
+            lname = request.POST.get('lastname')
+            email = request.POST.get('email')
+            pass1 = request.POST.get('password')
+            pass2 = request.POST.get('confirmpassword')
+            phone_no = request.POST.get('phone')
+
+            # Check if username, first name, last name, email, and passwords are provided and not empty
+            if not username.strip():
                 messages.error(request, "Username is required")
                 return redirect('signup')
 
-            # Check if fname field is present and not empty
-            fname = request.POST.get('firstname')
-            if fname is None or fname == '':
+            if not fname.strip():
                 messages.error(request, "First name is required")
                 return redirect('signup')
-             
-             # Check if lname field is present and not empty
-            lname = request.POST.get('lastname')
-            if lname is None or lname == '':
+
+            if not lname.strip():
                 messages.error(request, "Last name is required")
                 return redirect('signup')
 
-            # Check if email field is present and not empty
-            email = request.POST.get('email')
-            if email is None or email == '':
+            if not email.strip():
                 messages.error(request, "Email is required")
                 return redirect('signup')
 
@@ -58,6 +56,7 @@ def signup(request):
                 messages.error(request, "Passwords do not match")
                 return redirect('signup')
 
+            # Check if the username and email are already taken
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'This username is already taken')
                 return redirect('signup')
@@ -65,51 +64,66 @@ def signup(request):
             if User.objects.filter(email=email).exists():
                 messages.error(request, 'This email address is already taken')
                 return redirect('signup')
-            
-            # Validate that phone_no is not empty
-            if not phone_no:
-                messages.error(request, "Phone number is required")
+
+            # Check if the phone number is already associated with a profile
+            if Profile.objects.filter(mobile=phone_no).exists():
+                messages.error(request, 'This Phone Number is already taken')
                 return redirect('signup')
 
-            # Add the code to check if phone_no is not None and not empty
-            if phone_no is not None and phone_no != '':
+            # Create a new user with the provided information
+            myuser = User.objects.create_user(username=username, email=email, password=pass1)
+            myuser.first_name = fname
+            myuser.last_name = lname
+            myuser.is_active = False
+            myuser.save()
 
-                myuser = User.objects.create_user(username=username, email=email, password=pass1)
-                myuser.first_name = fname
-                myuser.last_name = lname
-                myuser.is_active = False
-                myuser.save()
-                otp = int(random.randint(1000,9999))
-                profile = Profile(user = myuser, mobile = phone_no, otp = otp)
-                profile.save()
-                print(otp)
-                mess=f'Hello\t{myuser.username},\nYour OTP to verify your account for AVF is {otp}\nThanks!'
-                send_mail(
-                "welcome to HoreHaven Verify your Email",
+            # Generate a random OTP (One-Time Password)
+            otp = int(random.randint(1000, 9999))
+
+            # Create a new Profile for the user with the OTP
+            profile = Profile(user=myuser, mobile=phone_no, otp=otp)
+            profile.save()
+
+            # Print the OTP (for debugging purposes)
+            print(otp)
+
+            # Compose and send an email with the OTP to the user
+            mess = f'Hello\t{myuser.username},\nYour OTP to verify your account for HoreHaven is {otp}\nThanks!'
+            send_mail(
+                "Welcome to HoreHaven. Verify your Email",
                 mess,
                 settings.EMAIL_HOST_USER,
                 [myuser.email],
                 fail_silently=False
-                )   
-                return render(request,'authentication/signup.html',{'otp':True,'usr':myuser})
+            )
+
+            # Render the template with OTP input field for user verification
+            return render(request, 'authentication/otp_login.html', {"otp":True, 'usr':myuser})
+        else:
+            # If 'otp' is present in the POST data, it means the user is verifying their account
+
+            # Get the email and user associated with the email
+            get_email = request.POST.get('email')
+            user = User.objects.get(email=get_email)
+
+            # Check if the entered OTP matches the OTP stored in the user's profile
+            if get_otp == Profile.objects.filter(user=user).last().otp:
+                user.is_active = True
+                user.save()
+                messages.success(request, f'Account is created for {user.email}')
+                # Delete the profile entry as it is no longer needed
+                Profile.objects.filter(user=user).delete()
+                return redirect('handlelogin')
             else:
-                get_email = request.POST.get('email')
-                user = User.objects.get(email = get_email)
-                if get_otp == Profile.objects.filter(user=user).last().otp:
-                    user.is_active = True
-                    user.save()
-                    messages.success(request,f'Account is created for {user.email}')
-                    Profile.objects.filter(user=user).delete()
-                    return redirect(handlelogin)
-                else:
-                    messages.warning(request,f'You Entered a wrong OTP')
-                    return render(request,'authentication/signup.html',{'otp':True,'usr':user})       
-            
-        if request.user.is_authenticated:
-            return redirect('/')
-        
-        return render(request, 'authentication/signup.html',{'otp':False})
-        
+                messages.warning(request, f'You Entered a wrong OTP')
+                return render(request, 'authentication/signup.html', {'otp': True, 'usr': user})
+
+    # Redirect the user to the homepage if they are already authenticated
+    if request.user.is_authenticated:
+        return redirect('/')
+
+    # Render the initial registration form
+    return render(request, 'authentication/signup.html', {'otp': False})
 
 def handlelogin(request):
     if request.method == "POST":
@@ -132,65 +146,74 @@ def handlelogin(request):
     
     return render(request, 'authentication/login.html')
 
-
-
 def otp_login(request):
+    # Check if the HTTP request method is POST
     if request.method == "POST":
+        # Check if the 'otp' parameter is in the POST request
         get_otp = request.POST.get('otp')
         if not get_otp:
+            # If 'otp' is not present in the POST data, proceed with OTP generation and email sending
+
+            # Get the email address from the POST request
             email = request.POST.get('email')
+
             try:
+                # Try to fetch the user with the given email address
                 user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                messages.error(request, "This is not a valid email id")
-                return redirect('otp_login')
+            except:
+                # If no user with that email exists, show an error message and redirect to the same page
+                messages.error(request, f"This is not a valid email id")
+                return redirect(otp_login)
 
-            # Generate a new OTP
-            otp = int(random.randint(1000, 9999))
-            
-            # Create or update the user's profile with the new OTP
-            profile, created = Profile.objects.get_or_create(user=user)
-            
-            # Ensure that the OTP field is not null
-            profile.otp = otp
-            profile.save()
+            if user is not None:
+                # Generate a random OTP (One-Time Password)
+                otp = int(random.randint(1000, 9999))
 
-            mess = f'Hello {user.username},\nYour OTP to login to your account for HoreHaven is {otp}\nThanks!'
-            
-            # Send the OTP to the user's email
-            send_mail(
-                "Welcome to HoreHaven - Verify your Email for Login",
-                mess,
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False
-            )
+                # Create a new Profile entry for the user with the generated OTP
+                profile = Profile(user=user, otp=otp)
+                profile.save()
 
-            return render(request, 'authentication/otp_login.html', {'otp': True, 'usr': user})
+                # Compose and send an email with the OTP to the user
+                mess = f'Hello\t{user.username},\nYour OTP to login to your account for  HoreHaven is {otp}\nThanks!'
+                send_mail(
+                    "Welcome to  HoreHaven. Verify your Email for login",
+                    mess,
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                    fail_silently=False
+                )
+
+                # Render the template with OTP input field for user login
+                return render(request, 'authentication/otp_login.html', {'otp': True, 'usr': user})
         else:
+            # If 'otp' is present in the POST data, it means the user is trying to log in
+
+            # Get the email address and user associated with the email
             get_email = request.POST.get('email')
             user = User.objects.get(email=get_email)
-            try:
-                profile = Profile.objects.get(user=user)
-            except Profile.DoesNotExist:
-                messages.error(request, "An OTP has not been sent to this email.")
-                return redirect('otp_login')
-            
-            if get_otp == str(profile.otp):
+
+            # Check if the entered OTP matches the OTP stored in the user's profile
+            if get_otp == Profile.objects.filter(user=user).last().otp:
+                # Log the user in
                 login(request, user)
-                # Clear the OTP after successful login
-                profile.otp = None
-                profile.save()
-                messages.success(request, f'Successfully logged in {user.email}')
-                return redirect('/')
+                messages.success(request, f'Successfully logged in as {user.email}')
+
+                # Delete the profile entry as it is no longer needed
+                Profile.objects.filter(user=user).delete()
+                return redirect('index')
             else:
-                messages.error(request, 'You entered a wrong OTP')
+                # Show a warning message for an incorrect OTP
+                messages.warning(request, f'You Entered a wrong OTP')
                 return render(request, 'authentication/otp_login.html', {'otp': True, 'usr': user})
 
+    # Redirect the user to the homepage if they are already authenticated
     if request.user.is_authenticated:
         return redirect('/')
 
+    # Render the initial OTP login form
     return render(request, 'authentication/otp_login.html')
+    
+
 
 def handlelogout(request):
     logout(request)
