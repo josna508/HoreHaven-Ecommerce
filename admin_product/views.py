@@ -103,12 +103,16 @@ def edit_product(request, id):
        
         brand = request.POST['brand']
         category = request.POST['category']
-        # price = request.POST['price']
-        # stock = request.POST['stock']
+        price = request.POST['price']
+        quantity = request.POST['quantity']
         offer = request.POST['offer']
 
         if name == '':
             messages.error(request,"Product name can't be null")
+            return redirect(edit_product)
+        
+        if not price or not quantity:
+            messages.error(request, "Price and quantity are required")
             return redirect(edit_product)
         
         offer_instance = None
@@ -124,7 +128,8 @@ def edit_product(request, id):
             product_name=name,
             brand=brand_instance,
             category=category_instance,
-          
+            price = price,
+            quantity = quantity,
             offer=offer_instance,
             
         )
@@ -138,12 +143,16 @@ def edit_product(request, id):
     product = Product.objects.get(id=id)
     brands = Brand.objects.all()
     categories = Category.objects.all()
+
+ 
+    
     context = {
 
         "product": product,
         'categories' : categories,
         'brands' : brands,
         'offers' : offers,
+      
     }
 
     return render(request, "adminpanel/product-update.html", context)
@@ -173,7 +182,11 @@ def add_category(request):
             
         name = request.POST['name']
         description = request.POST['desc']
-        offer = request.POST['offer']
+        offer = ''
+        try:
+            offer = request.POST['offer']
+        except Exception as e:
+            print(e)
         check = [name]
         is_available = request.POST.get('is_available', False)        
         if is_available:

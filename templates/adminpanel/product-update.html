@@ -45,8 +45,8 @@
                         <label class="form-label">price</label>
                         <div class="row gx-2">
                           <input
-                            placeholder="&#8377;{{ product.price }}"
-                            value="{{ product.price }}"
+                            placeholder="&#8377;{{ ProductVariant.price }}"
+                            value="{{ ProductVariant.price }}"
                             type="text"
                             class="form-control"
                             name="price"
@@ -58,8 +58,8 @@
                       <div class="mb-4">
                         <label class="form-label">Stock</label>
                         <input
-                        placeholder="{{ product.stock }}" 
-                        value="{{ product.stock }}" 
+                        placeholder="{{ProductVariant.quantity }}" 
+                        value="{{ProductVariant.quantity }}" 
                           type="text"
                           class="form-control"
                           name="stock"

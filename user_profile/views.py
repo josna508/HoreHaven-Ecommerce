@@ -96,30 +96,6 @@ def edit_profile(request):
         messages.success(request, 'Your details updated')
         return redirect(profile)
 
-# @login_required(login_url='handlelogin')
-# def change_password(request):
-#     if request.method == "POST":
-#         password = request.POST['password']
-#         npass1 = request.POST['npass1']
-#         npass2 = request.POST['npass2']
-#         user = request.user
-        
-        
-#         if npass1 != npass2:
-#             messages.error(request, 'Password not matching')
-#             return redirect(change_password)
-        
-#         success = user.check_password(password)
-#         if success:
-#             user.set_password(npass1)
-#             user.save()
-#             messages.success(request, 'Password succesfully changed')
-#             return redirect('handlelogout')
-#         else:
-#             messages.error(request, 'Incorrect Password')
-#             return redirect(change_password)
-        
-#     return render(request, 'changepassword.html')
 
 @login_required(login_url='handlelogin')
 def edit_address(request, id):

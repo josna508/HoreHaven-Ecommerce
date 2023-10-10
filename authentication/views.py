@@ -109,6 +109,7 @@ def signup(request):
             # Check if the entered OTP matches the OTP stored in the user's profile
             if get_otp == Profile.objects.filter(user=user).last().otp:
                 user.is_active = True
+                print(user.is_active, 'useeeeeeeeeeeeeeeeeeeactive')
                 user.save()
                 messages.success(request, f'Account is created for {user.email}')
                 # Delete the profile entry as it is no longer needed

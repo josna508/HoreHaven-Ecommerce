@@ -68,6 +68,7 @@
 											<a href="{% url 'product_details' product.id %}">
 												<h2 class="product-title">{{ product.product_name }}</h2>
 											</a>
+											<p class="product-color">Color: {{ product.productVariant.first.color }}</p>
 										</div>
 									</div>
 								</div>
@@ -121,16 +122,16 @@
 							{% endfor %}
 						</ul>
 					</div>
-					{% comment %} <div class="widget ltn__menu-widget">
+					<div class="widget ltn__menu-widget">
 						<h4 class="ltn__widget-title ltn__widget-title-border">Brand</h4>
-						<ul>
+						 <ul>
 							{% for i in brand %}
 							<li>
-								<<a href="{% url 'filtered_products' %}?product_name={{ products|get_item:forloop.counter0.product_name }}">{{ products|get_item:forloop.counter0.product_name }}</a> 
+								<a href="{% url 'filtered_products' %}?brand={{ i.brand_name }}">{{ i.brand_name }}</a> 
 							</li>
 							{% endfor %}
-						</ul>
-					</div> {% endcomment %}
+						</ul> 
+					</div> 
 				</aside> 
 		</div>
 	</div>
