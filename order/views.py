@@ -235,6 +235,7 @@ def cancel_orders(request, id):
 
         print('rrrrrrrrrrrrr',item.sub_total())
         print('Item Subtotal:', item.sub_total)
+        print('Item Subtotal:', item.sub_total)
 
         # Replace with the actual method to calculate subtotal
         if wallet:
