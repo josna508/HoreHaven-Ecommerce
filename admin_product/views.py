@@ -402,3 +402,4 @@ def editvariant(request, id):
     # If the request method is GET or after processing the POST request,
     # render the 'editvariant.html' template with the form and variant data
     return render(request, 'adminpanel/editvariant.html', {'products': pr, 'variant': variant})
+
