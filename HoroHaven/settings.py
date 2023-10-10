@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--2%*_yt)^lfpv5ai*&i3jf@y@)1lk#x@l&((f268%*a2^x+6)9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -93,12 +93,11 @@ DATABASES = {
     'default': {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'horo_haven',
-        'NAME': 'test',
-        'USER': 'postgres',
+        'NAME': 'myproject',
+        'USER': 'josna',
         'PASSWORD': '123456',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 
@@ -140,9 +139,7 @@ USE_TZ = True
 import os
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR /'static'
