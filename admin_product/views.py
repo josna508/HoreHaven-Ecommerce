@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 # Create your views here.
 
 def products(request):
-    products = Product.objects.all().filter(is_available = True)
+    products = Product.objects.all()
     context = {
         'products' : products,
         
