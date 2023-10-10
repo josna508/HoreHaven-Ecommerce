@@ -162,8 +162,7 @@ def delete_product(request, id):
 
     product = Product.objects.get(id=id)
     name = product.product_name
-    product.is_available = False
-    product.save()    
+    product.delete()    
     messages.success(request,f'Product "{name}" deleted')
     return redirect(products)
 
