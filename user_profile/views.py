@@ -155,7 +155,7 @@ def add_address(request):
 def wallet(request):
     user = request.user
     print(user, 'yjgjysgfuhkesjughhukhe')
-    wallet = Wallet.objects.get(user=user)
+    wallet, _ = Wallet.objects.get_or_create(user=user)
     print(wallet,'hgsyuegfuyguerukhsuiefhukesgudsgfujwkgwajh')
     context = {
         'wallet':wallet
