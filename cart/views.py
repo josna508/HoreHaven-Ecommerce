@@ -128,9 +128,10 @@ def cart(request, total=0, quantity=0, cart_items=None,count=0,coupons=None, car
             cart.coupon = coupon
             cart.save()
                 
-        except:
+        except Coupon.DoesNotExist:
             messages.error(request, 'Coupon not found')
             return redirect('cart')
+        
         
     if cart.coupon:
         discount_amount = total * cart.coupon.off_percent / 100
