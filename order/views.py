@@ -209,9 +209,7 @@ def my_orders(request):
 # View to cancel orders
 @login_required(login_url='handlelogin')
 def cancel_orders(request, id):
-    print('pppppppppppppppppppppppppppp2')
     user = request.user
-    print(user,'yyyyyyyyyyyyyyyyyyyyyyyy')
      
     item = OrderItem.objects.get(id = id)
     wallet, _ = Wallet.objects.get_or_create(user = user)

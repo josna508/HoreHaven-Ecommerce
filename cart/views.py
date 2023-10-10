@@ -76,6 +76,7 @@ def add_cart(request, variant_id):
 def cart(request, total=0, quantity=0, cart_items=None,count=0,coupons=None, cart=None, subtotal=0, discount_amount=0):
     offer_price = 0
     try:
+        print(request.session)
         cart,_ = Cart.objects.get_or_create(session_id = _session_id(request))
         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
         
