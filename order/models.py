@@ -68,8 +68,8 @@ class OrderItem(models.Model):
         ('returned', 'Returned'),
     ]
     user = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL,null=True)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL,null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,null=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL,null=True, blank=True)
     product_price = models.FloatField()
     quantity = models.IntegerField()
