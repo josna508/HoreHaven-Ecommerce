@@ -37,7 +37,7 @@
                   <td>{{ order_item.status }}</td>
                   <td>
                     {% if order_item.status == 'accepted' or order_item.status == 'Shipped' %}
-                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancelModal{{ order_item.id }}"><a style="color: white; text-decoration: none;">Cancel</a></button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancelModal{{ order_item.id }}"><a style="color: blue; text-decoration: none;">Cancel</a></button>
                       <!-- Modal for Order Cancellation -->
                       <div class="modal fade" id="cancelModal{{ order_item.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{ order_item.id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -54,24 +54,58 @@
                           </div>
                         </div>
                       </div>
-                    {% elif order_item.status == 'Delivered' %}
-                      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#returnModal{{ order_item.id }}"><a href="{% url 'returnorder' order_item.id %}" style="color: white; text-decoration: none;">Return</a></button>
+                      {% elif order_item.status == 'Delivered' %}
+                      <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#returnModal{{ order_item.id }}">Return</button>
+                   
                       <!-- Modal for Order Return -->
                       <div class="modal fade" id="returnModal{{ order_item.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{ order_item.id }}" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h3 class="modal-title" id="exampleModalLabel{{ order_item.id }}">Order Return</h3>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">Do you want to return your order of {{ order_item.product.product_name }}?</div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <a href="{% url 'returnorder' order_item.id %}"><button type="button" class="btn btn-danger">Yes</button></a>
-                            </div>
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h3 class="modal-title" id="exampleModalLabel{{ order_item.id }}">Order Return</h3>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  </div>
+                                  <form method="post" action="{% url 'returnorder' order_item.id %}">
+                                      {% csrf_token %}
+                                      <div class="modal-body">
+                                        <label for="return_reason">Select Return Reason:</label>
+                                        
+                                        <div class="return-reason-options">
+                                            <label class="return-reason-option">
+                                                <input type="radio" name="return_reason" value="color">
+                                                Color issue
+                                            </label>
+                                            <br>
+                                    
+                                            <label class="return-reason-option">
+                                                <input type="radio" name="return_reason" value="size">
+                                                Size issue
+                                            </label>
+                                            <br>
+                                    
+                                            <label class="return-reason-option">
+                                                <input type="radio" name="return_reason" value="money">
+                                                 price issue
+                                            </label>
+                                            <br>
+                                    
+                                            <label class="return-reason-option">
+                                                <input type="radio" name="return_reason" value="quality">
+                                                Quality issue
+                                            </label>
+                                            <br>
+                                            <!-- Add more options as needed -->
+                                        </div>
+                                    </div>                                                           
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-danger" style="color: black;">Return</button>
+                                      </div>
+                                  </form>
+                              </div>
                           </div>
-                        </div>
                       </div>
+                   
                     {% else %}
                       <span>No action available</span>
                     {% endif %}

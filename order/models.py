@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from user_profile.models import UserAddress
-from shop.models import Product
+from shop.models import Product, ProductVariant
 import string
 import random
 from datetime import datetime
@@ -20,6 +20,8 @@ def generate_order_id():
         new_id = 'HH' + year + month + day + hour+ order_id
         return new_id
     
+class PaymentMethod(models.Model):
+    method = models.CharField(max_length=225)
 
 
 class Payment(models.Model):
@@ -28,7 +30,7 @@ class Payment(models.Model):
         ('done', 'Done'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    payment_method = models.CharField(max_length=50)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE)
     amount_paid = models.FloatField(null=True)
     status = models.CharField(max_length=20, choices=STATUS, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -75,7 +77,7 @@ class OrderItem(models.Model):
     quantity = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
-    variant = models.CharField(max_length=50, blank=True, null=True)
+    variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL, blank=True, null=True)
 
 
     def sub_total(self):
@@ -92,3 +94,11 @@ class OrderItem(models.Model):
 class Wallet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+
+class WalletTransaction(models.Model):
+    wallet = models.ForeignKey(Wallet,on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    type = models.CharField(max_length=100,null=True,blank=True)
+    description = models.CharField(max_length=100,null=True,blank=True)
+    date = models.DateTimeField(auto_now_add=True,null=True,blank=True)

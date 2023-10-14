@@ -362,43 +362,37 @@ def addvariant(request):
 
 
 # View to edit an existing product variant
-def editvariant(request, id):
-    # Check if the user is a superuser, if not, redirect to the login page
+@login_required(login_url='handle_login')
+def editvariant(request, variant_id):
     if not request.user.is_superuser:
-        return redirect(handlelogin)
+        return redirect('handle_login')
 
-    # Retrieve all products for use in the form
+    try:
+        variant = ProductVariant.objects.get(id=variant_id)
+    except ProductVariant.DoesNotExist:
+        # Handle the case where the variant doesn't exist
+        return HttpResponse("Variant not found", status=404)
+
     pr = Product.objects.all()
 
-    # Get the variant with the specified ID or return a 404 error if not found
-    variant = get_object_or_404(ProductVariant, id=id)
-
     if request.method == 'POST':
-        # Get the updated data from the POST request
         quantity = request.POST['quantity']
         price = request.POST['price']
         color = request.POST['color']
         product_id = request.POST['product']
-        images = request.FILES.getlist('images')  # Get a list of uploaded images
+        images = request.FILES.getlist('images')
 
-        # Update the existing variant with the new data
         variant.quantity = quantity
         variant.price = price
         variant.color = color
-        variant.product_id = product_id
+        variant.product = Product.objects.get(id=product_id)
         variant.save()
 
-        # Remove existing images associated with the variant
-        variant.productimage_set.all().delete()
-
-        # Add new images to the variant
+        # Clear existing images and add new ones
+        variant.images.clear()
         for image in images:
             ProductImage.objects.create(variant=variant, pr_images=image)
 
-        # Display a success message to the user
         messages.success(request, 'Variant updated')
 
-    # If the request method is GET or after processing the POST request,
-    # render the 'editvariant.html' template with the form and variant data
-    return render(request, 'adminpanel/editvariant.html', {'products': pr, 'variant': variant})
-
+    return render(request, 'adminpanel/editvariant.html', {'variant': variant, 'products': pr})

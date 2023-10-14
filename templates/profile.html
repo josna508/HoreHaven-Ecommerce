@@ -41,12 +41,12 @@
                     {% if request.user.email %}
                         <p>Email: <strong>{{ request.user.email }}</strong></p>
                     {% endif %}
-                    <a href="#" class="btn flosun-button secondary-btn theme-color rounded-0">
+                    <a href="{% url "edit_profile" %}" class="btn flosun-button secondary-btn theme-color rounded-0">
                         <i class="fa fa-edit mr-2"></i>Edit User
                     </a>
                 </div>
                 <p class="mb-0">
-                    From your account dashboard, you can easily check and view your recent orders, manage your shipping and billing addresses, and edit your password and account details.
+                    From your account dashboard, you can easily check and view your recent orders, manage your shipping and billing addresses and account details.
                 </p>
             </div>
         </div>

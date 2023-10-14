@@ -53,7 +53,8 @@ def admin_dashboard(request):
 
         # sale report by month for graph
         today = timezone.now().date()
-        five_months_ago = today - timedelta(days=150)
+        five_months_ago = today.replace(day=1, month=10)
+
         sales_report = (
         OrderItem.objects
         .annotate(month=TruncMonth('created_at'))

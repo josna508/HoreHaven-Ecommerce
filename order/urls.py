@@ -9,4 +9,6 @@ urlpatterns = [
     path('presuccess/',views.pre_success, name='presuccess'),
     path('success/',views.success, name='success'),
     path('returnorder/<int:id>',views.return_order, name='returnorder'),
+    path('wallet/',views.walletpayments, name='wallet'),
+    
 ]

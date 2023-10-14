@@ -32,7 +32,7 @@
           ></span>
           <div class="text">
             <h6 class="mb-1 card-title">Orders</h6>
-            <span>{{ order_coun}}</span>
+            <span>{{ order_count}}</span>
             <span class="text-sm"> Excluding orders in transit </span>
           </div>
         </article>
@@ -148,7 +148,7 @@
                   <i
                     class="material-icons md-payment font-xxl text-muted mr-5"
                   ></i>
-                  {{ item.order.payment_method }}
+                  {{ item.payment.payment_method}}
                 </td>
                 {% comment %} <td>
                   <a href="{% url 'invoice' item.id %}" class="btn btn-xs"> View details</a>

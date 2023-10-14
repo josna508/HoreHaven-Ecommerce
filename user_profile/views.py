@@ -54,48 +54,38 @@ def profile(request):
               'addresses' : user_address,
           }
           return render(request, 'profile.html', context)
-
-
 @login_required(login_url='handlelogin')     
 def edit_profile(request):
-    if request.method == "POST":
-        image = ''
-        try:
-            image = request.FILES['image']
-            user_profile = UserProfile.objects.filter(user=request.user).first()
-            user_profile.profile_picture = image
-            user_profile.save()
-        except:
-             pass
-        fname = request.POST['fname']
-        lname = request.POST['lname']
-        email = request.POST['email']
-        address = request.POST['address']
-        city = request.POST['city']
-        state = request.POST['state']
-        country = request.POST["country"]
-        phone = request.POST["phone"]
+    if request.method == 'POST':
+        # Get form data from POST request
+        username = request.POST.get('username')
+        first_name = request.POST.get('firstname')
+        last_name = request.POST.get('lastname')
+        email = request.POST.get('email')
 
-        if User.objects.filter(email=email).exists() and email != request.user.email:
-                messages.error(request, 'This email address is already taken')
-                return redirect(edit_profile)
-        
-        user_profile = UserProfile.objects.get(user=request.user)
+        # Check if the email is already in use by another user
+        if User.objects.filter(email=email).exclude(username=request.user.username).exists():
+            messages.error(request, 'This email address is already taken')
+            return redirect('edit_profile')
+
+        # Update the user's information
         user = request.user
-        user.first_name = fname
-        user.last_name = lname
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
         user.email = email
         user.save()
-        user_profile.address = address
-        user_profile.city = city
-        user_profile.state = state
-        user_profile.country = country
-        user_profile.phone_no = phone
-        user_profile.save()
 
         messages.success(request, 'Your details updated')
-        return redirect(profile)
+        return redirect('profile')
 
+    # If it's not a POST request, you can display a form to edit the user's details.
+    # You can retrieve the user's information and pass it to the template for editing.
+    user = request.user
+    context = {
+        'user': user,
+    }
+    return render(request, 'edit_profile.html', context)
 
 @login_required(login_url='handlelogin')
 def edit_address(request, id):

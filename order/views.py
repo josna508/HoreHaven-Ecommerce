@@ -10,8 +10,15 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q
 from django.contrib import messages
-from .models import Wallet
+from .models import Wallet,WalletTransaction
 from decimal import Decimal
+# signals.py
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from .models import Order
+from django.http import Http404
+from django.core.exceptions import ObjectDoesNotExist
 # from authentication.views import handle_login
 # Create your views here.
 
@@ -19,24 +26,104 @@ from decimal import Decimal
 
 
 # Payment confirmation view
-@login_required(login_url='handlelogin')
-def payments(request, total = 0, pretotal=0):
+# @login_required(login_url='handlelogin')
+# def payments(request, total = 0, pretotal=0):
 
-    # Check if the user is authenticated
+#     # Check if the user is authenticated
+#     if request.user.is_authenticated:
+#     # Create a Payment instance for cash on delivery
+#         payment = Payment(
+#             user = request.user,
+#             payment_method ="cash on delivery",
+#         )
+#         payment.save()
+#     # Get the latest order for the user and update payment and status
+#         order = Order.objects.filter(user=request.user).order_by('-id').first()
+#         order.payment = payment
+#         order.status = 'accepted'
+#         order.save()
+
+#     # move cart items to ordered items and calculate the total
+#         cart_items = CartItem.objects.filter(user=request.user)
+#         for cart_item in cart_items:
+#             product_price = 0
+#             if cart_item.product.offer:
+#                 product_price = cart_item.product.get_offer_price(cart_item.variant)
+#             elif cart_item.product.category.offer:
+#                 product_price = cart_item.product.get_offer_price_by_category(cart_item.variant)
+#             else:
+#                 product_price = cart_item.variant.price
+
+#             orderitem = OrderItem(
+#                 user = request.user,
+#                 order = order,
+#                 product = cart_item.product,
+#                 payment = payment,
+#                 product_price = product_price,
+#                 quantity = cart_item.quantity,
+#                 status = 'accepted',
+#             )
+#             orderitem.save()
+
+#             total += orderitem.sub_total()
+
+
+    
+#         # Reduce stock of ordered product
+#             product = Product.objects.get(id=cart_item.product.id)
+#             cart_item.variant.quantity -= cart_item.quantity
+#             product.save()
+        
+
+#         # Send an order confirmation email to the user
+#         mess=f'Hello\t{request.user.username},\nYour Order of { order.order_id } has confirmed.\nThanks!'
+#         send_mail(
+#         "Thank you for the order",
+#         mess,
+#         settings.EMAIL_HOST_USER,
+#         [request.user.email],
+#         fail_silently=False
+#         )
+
+#         # Removing Cart items
+#         CartItem.objects.filter(user=request.user).delete()
+#         cart = Cart.objects.get(session_id=_session_id(request))
+#         cart.coupon = None
+#         cart.save()
+
+#         orderitems = OrderItem.objects.filter(user=request.user, order=order)
+#         if order.coupon_discount:
+#             pretotal=total
+
+#         context = {
+#             'order' : order,
+#             'orderitems' : orderitems,
+#             'total' : total,
+#             'pretotal':pretotal,
+            
+#         }
+   
+
+#         return render(request, "confirm.html", context)
+
+#     # return render(request, 'payment.html')
+
+@login_required(login_url='handlelogin')
+def payments(request, total=0, pretotal=0):
     if request.user.is_authenticated:
-    # Create a Payment instance for cash on delivery
+        user=request.user
+        payment_method = PaymentMethod.objects.create(method='Cash on delivery')  # Assuming PaymentMethod ID for Wallet Payment
         payment = Payment(
-            user = request.user,
-            payment_method ="cash on delivery",
+        user=user,
+        payment_method=payment_method,
         )
         payment.save()
-    # Get the latest order for the user and update payment and status
+
         order = Order.objects.filter(user=request.user).order_by('-id').first()
         order.payment = payment
         order.status = 'accepted'
         order.save()
 
-    # move cart items to ordered items and calculate the total
         cart_items = CartItem.objects.filter(user=request.user)
         for cart_item in cart_items:
             product_price = 0
@@ -48,37 +135,24 @@ def payments(request, total = 0, pretotal=0):
                 product_price = cart_item.variant.price
 
             orderitem = OrderItem(
-                user = request.user,
-                order = order,
-                product = cart_item.product,
-                payment = payment,
-                product_price = product_price,
-                quantity = cart_item.quantity,
-                status = 'accepted',
+                user=request.user,
+                order=order,
+                product=cart_item.product,
+                payment=payment,
+                product_price=product_price,
+                quantity=cart_item.quantity,
+                variant=cart_item.variant,
+                status='accepted',
             )
             orderitem.save()
-
             total += orderitem.sub_total()
 
-
-    
-        # Reduce stock of ordered product
             product = Product.objects.get(id=cart_item.product.id)
             cart_item.variant.quantity -= cart_item.quantity
             product.save()
-        
 
-        # Send an order confirmation email to the user
-        mess=f'Hello\t{request.user.username},\nYour Order of { order.order_id } has confirmed.\nThanks!'
-        send_mail(
-        "Thank you for the order",
-        mess,
-        settings.EMAIL_HOST_USER,
-        [request.user.email],
-        fail_silently=False
-        )
+        # The signal will handle sending the email
 
-        # Removing Cart items
         CartItem.objects.filter(user=request.user).delete()
         cart = Cart.objects.get(session_id=_session_id(request))
         cart.coupon = None
@@ -86,20 +160,32 @@ def payments(request, total = 0, pretotal=0):
 
         orderitems = OrderItem.objects.filter(user=request.user, order=order)
         if order.coupon_discount:
-            pretotal=total
+            pretotal = total
 
         context = {
-            'order' : order,
-            'orderitems' : orderitems,
-            'total' : total,
-            'pretotal':pretotal,
-            
+            'order': order,
+            'orderitems': orderitems,
+            'total': total,
+            'pretotal': pretotal,
         }
-   
 
         return render(request, "confirm.html", context)
+    else:
+        return redirect('handlelogin')
 
-    # return render(request, 'payment.html')
+
+@receiver(post_save, sender=Order)
+def send_order_confirmation_email(sender, instance, created, **kwargs):
+    if created:
+        order = instance
+        user = order.user
+
+        subject = "Thank you for your order"
+        message = f"Hello {user.username},\nYour Order of {order.order_id} has been confirmed.\nThanks!"
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [user.email]
+
+        send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
 # Place order view
 @login_required(login_url='handlelogin')
@@ -140,7 +226,7 @@ def place_order(request):
 
         if request.method == "POST":
             # Get user input for address
-            fname = request.POST.get('fname')
+            fname = request.POST['fname']
             lname = request.POST['lname']
             ph_no = request.POST['ph_no']
             house = request.POST['house']
@@ -185,7 +271,7 @@ def place_order(request):
         client = razorpay.Client(auth= ( settings.KEY, settings.KEY_SECRET ))
         payment = client.order.create({'amount' :total * 100 , 'currency' :'INR', 'payment_capture' : 1 })
         
-
+        wallet, _ = Wallet.objects.get_or_create(user=request.user)
 
         context = {
             'order' : order,
@@ -193,6 +279,7 @@ def place_order(request):
             'total' : total,
             'payment' : payment,
             'discount_amount': discount_amount,
+            'wallet': wallet,
         }
         return render(request,'payment.html', context)
 
@@ -273,12 +360,11 @@ def pre_success(request):
 # for order confirmation page and adding payment details
 @login_required(login_url='handlelogin')
 def success(request, total = 0):
-        payment_method = 'razorpay'
-         # Create a Payment instance and save it to the database
+        user=request.user
+        payment_method = PaymentMethod.objects.create(method='razorpay')  # Assuming PaymentMethod ID for Wallet Payment
         payment = Payment(
-            user = request.user,
-            payment_method = payment_method,
-            status = 'Paid'
+        user=user,
+        payment_method=payment_method,
         )
         payment.save()
          # Retrieve the latest order for the authenticated user and update payment and status
@@ -297,6 +383,8 @@ def success(request, total = 0):
                 product_price = cart_item.product.get_offer_price_by_category()
             else:
                 product_price = cart_item.variant.price
+
+            print('cart item variant ::>>>>>>>>>>>>>>>>>>>>> ', cart_item.variant)
             orderitem = OrderItem(
                 user = request.user,
                 order = order,
@@ -304,6 +392,7 @@ def success(request, total = 0):
                 payment = payment,
                 product_price = product_price,
                 quantity = cart_item.quantity,
+                variant = cart_item.variant,
                 status = 'accepted',
             )
             orderitem.save()
@@ -345,36 +434,132 @@ def success(request, total = 0):
         return render(request, "confirm.html", context)
 
 
-@login_required(login_url='handlelogin')
+
+
 def return_order(request, id):
-    item = OrderItem.objects.get(id=id)
+    try:
+        item = OrderItem.objects.get(id=id)
+  
 
-    
-    # Check if the payment method is not 'cash on delivery' and there is a coupon
-    if item.order.payment.payment_method != 'cash on delivery' and item.order.coupon:
+        # Check if the item.variant is None (non-existent)
+        if item.variant is None:
+          
+            raise Http404("Order item not found or variant does not exist")
+
         item.status = 'returned'
-        quantity = item.quantity
-        item.product.stock += quantity
         item.save()
-
-    else:
-        item.status = 'returned'
         quantity = item.quantity
 
-        item.product.stock += quantity
-        item.save()
-        
+        # Check the payment method and coupon
+        if item.order.payment.payment_method in ['cash on delivery', 'razorpay', 'other_payment_method']:
+            # Add the returned quantity to the variant's quantit
+           
+            item.variant.quantity += quantity
+
+            item.variant.save()
+
+        # Send an email to the user
+        current_user = request.user
+        subject = "Returned Order Successful!"
+        message = f'Greetings {current_user.first_name}.\nYour Order {item.order.order_id} has been returned. \nThank you for shopping with us!'
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [current_user.email],
+            fail_silently=False
+        )
+
+        return redirect(my_orders)
+
+    except ObjectDoesNotExist:
+        raise Http404("Order item does not exist")
     
-    # Send an email to the user
-    current_user = request.user
-    subject = "Returned Order Successful!"
-    message = f'Greetings {current_user.first_name}.\nYour Order {item.order.order_id} has been returned. \nThank you for shopping with us!'
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_HOST_USER,
-        [current_user.email],
-        fail_silently=False
-    )
-    
-    return redirect(my_orders)
+
+
+@login_required(login_url='handlelogin')
+def walletpayments(request, total=0, pretotal=0):
+    if request.user.is_authenticated:
+        user = request.user
+        wallet, _ = Wallet.objects.get_or_create(user=request.user)
+        # Check if the user has enough balance in their wallet
+        if wallet.amount >= total:
+            # Deduct the payment from the user's wallet balance
+            
+
+            # Create a payment record for wallet payment
+            payment_method = PaymentMethod.objects.create(method='Wallet')  # Assuming PaymentMethod ID for Wallet Payment
+            payment = Payment(
+                user=user,
+                payment_method=payment_method,
+            )
+            payment.save()
+
+            # Update the order status and associate it with the payment
+            order = Order.objects.filter(user=user).order_by('-id').first()
+            order.payment = payment
+            order.status = 'accepted'
+            order.save()
+
+            # Move cart items to ordered items
+            cart_items = CartItem.objects.filter(user=user)
+            for cart_item in cart_items:
+                product_price = 0
+                if cart_item.product.offer:
+                    product_price = cart_item.product.get_offer_price(cart_item.variant)
+                elif cart_item.product.category.offer:
+                    product_price = cart_item.product.get_offer_price_by_category(cart_item.variant)
+                else:
+                    product_price = cart_item.variant.price
+
+
+                # Create an order item for each cart item
+                order_item = OrderItem(
+                    user=user,
+                    order=order,
+                    product=cart_item.product,
+                    payment=payment,
+                    product_price=product_price,  # Assuming no offer for simplicity
+                    quantity=cart_item.quantity,
+                    status='accepted',
+                )
+                order_item.save()
+
+                total += order_item.sub_total()
+
+
+                # Reduce the product's stock
+                product = Product.objects.get(id=cart_item.product.id)
+                cart_item.variant.quantity -= cart_item.quantity
+                product.save()
+
+            # Clear the user's cart
+            CartItem.objects.filter(user=user).delete()
+            cart = Cart.objects.get(session_id=_session_id(request))
+            cart.coupon = None
+            cart.save()
+
+            # Calculate order total and discounts
+            orderitems = OrderItem.objects.filter(user=user, order=order)
+            if order.coupon_discount:
+                pretotal = total
+                total -= order.coupon_discount
+            
+            wallet.amount -= total
+            wallet.save()
+            description = 'Product purchased'
+            wallet_transaction = WalletTransaction.objects.create(
+            wallet=wallet, description=description, type='Debit', amount=total)
+            messages.success(request, 'Amount Debited in your wallet')
+
+            context = {
+                'order': order,
+                'orderitems': orderitems,
+                'total': total,
+                'pretotal': pretotal,
+            }
+
+            return render(request, "confirm.html", context)
+       
+
+    return render(request, 'payment.html')

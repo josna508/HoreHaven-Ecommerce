@@ -25,7 +25,7 @@
     <div class="myaccount-content">
         <h3>Account Details</h3>
         <div class="account-details-form">
-            <form action="#" method="post">
+            <form action="{% url "edit_profile" %}" method="post" >
             {% csrf_token %}
     {% if messages %}
         {% for message in messages %}

@@ -74,7 +74,7 @@ def signup(request):
             myuser = User.objects.create_user(username=username, email=email, password=pass1)
             myuser.first_name = fname
             myuser.last_name = lname
-            myuser.is_active = False
+            myuser.is_active = True
             myuser.save()
 
             # Generate a random OTP (One-Time Password)
