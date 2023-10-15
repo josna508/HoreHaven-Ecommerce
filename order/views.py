@@ -563,3 +563,9 @@ def walletpayments(request, total=0, pretotal=0):
        
 
     return render(request, 'payment.html')
+
+@login_required(login_url='handlelogin')
+def my_wallet(request):
+    wallet, _ = Wallet.objects.get_or_create(user=request.user)
+    return render(request, 'wallet.html',{'wallet' : wallet})
+

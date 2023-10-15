@@ -172,13 +172,13 @@
                                                     {% if user.is_authenticated and user.is_superuser %}
                                                     <li><a href="{% url 'profile' %}">My Account </a></li>
                                                     <li><a href="{% url 'myorders' %}">My Orders </a></li>
-                                                    <li><a href="{% url 'wallet' %}">My Wallet </a></li>
+                                                    <li><a href="{% url 'my-wallet' %}">My Wallet </a></li>
                                                     <li><a href="{% url 'adminpanel'%}">Admin</a></li>
                                                     <li><a href="{% url 'handlelogout' %}">logout</a></li>
                                                     {% elif user.is_authenticated %}
                                                     
                                                     <li><a href="{% url 'myorders' %}">My Orders </a></li>
-                                                    <li><a href="{% url 'wallet' %}">My Wallet </a></li>
+                                                    <li><a href="{% url 'my-wallet' %}">My Wallet </a></li>
                                                     <li><a href="{% url 'profile' %}">My Account </a></li>
                                                     <li><a href="{% url 'handlelogout' %}">Logout</a></li>
                                                     {% else %}

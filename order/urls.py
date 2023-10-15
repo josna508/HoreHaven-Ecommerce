@@ -10,5 +10,6 @@ urlpatterns = [
     path('success/',views.success, name='success'),
     path('returnorder/<int:id>',views.return_order, name='returnorder'),
     path('wallet/',views.walletpayments, name='wallet'),
+    path('my-wallet/',views.my_wallet, name='my-wallet'),
     
 ]
