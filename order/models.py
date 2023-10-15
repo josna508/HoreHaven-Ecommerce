@@ -37,7 +37,7 @@ class Payment(models.Model):
     
 
     def __str__(self):
-        return self.payment_method
+        return self.payment_method.method
     
 
 class Order(models.Model):

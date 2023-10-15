@@ -18,8 +18,8 @@ class Product(models.Model):
 
    
 
-    def is_outofstock(self):
-        return self.stock <= 0 
+    # def is_outofstock(self):
+    #     return self.stock <= 0 
 
    
     def __str__(self):
